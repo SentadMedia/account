@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package proto;
+
+
+service AccountAPI {
+  rpc GetAccount (GetAccountRequest) returns (GetAccountResponse) {}
+}
+
+message GetAccountRequest {
+}
+
+message GetAccountResponse {
+  string account = 1;
+}
