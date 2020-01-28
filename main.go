@@ -32,7 +32,7 @@ func main() {
 	gRPCAPIPort := mustInt(env.GetEnv("GRPC_API_PORT", "9000"))
 
 	config := app.Config{
-		LogLevel:    fw.LogInfo,
+		LogLevel:    fw.LogTrace,
 		ServiceName: serviceName,
 		GRpcAPIPort: gRPCAPIPort,
 	}

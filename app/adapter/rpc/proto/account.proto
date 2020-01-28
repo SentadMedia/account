@@ -3,9 +3,28 @@ syntax = "proto3";
 package proto;
 
 
-service Account {
+service Account{
   rpc GetAccount (GetAccountRequest) returns (GetAccountResponse) {}
+  rpc PostAccount (PostAccountRequest) returns (PostAccountResponse) {}
 }
+
+message User {
+  int64 id = 1;
+  string username = 2;
+  string email = 3;
+  string password = 4;
+}
+
+message PostAccountRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3;
+}
+
+message PostAccountResponse {
+  User account = 1;
+}
+
 
 message GetAccountRequest {
 }

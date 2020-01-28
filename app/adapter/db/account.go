@@ -1,10 +1,10 @@
 package db
 
 import (
-	"fmt"
-
 	"github.com/jinzhu/gorm"
+	"github.com/sentadmedia/account/app/adapter/rpc/proto"
 
+	"github.com/sentadmedia/account/app/entity"
 	"github.com/sentadmedia/account/app/usecase/repository"
 )
 
@@ -16,8 +16,17 @@ type AccountSQL struct {
 }
 
 func (a AccountSQL) GetAcccount() string {
-	fmt.Print(a.db)
-	return "kawtar elouaraini"
+	return "kawtar.elouaraini@gmail.com"
+}
+
+func (p AccountSQL) CreateAccount(req *proto.PostAccountRequest) (entity.Account, error) {
+	account := entity.Account{
+		Username: req.Username,
+		Email:    req.Email,
+		Password: req.Password,
+	}
+	p.db.Create(&account)
+	return account, nil
 }
 
 // NewUserSQL creates UserSQL

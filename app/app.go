@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/sentadmedia/account/app/entity"
 	"github.com/sentadmedia/account/dep"
 	"github.com/sentadmedia/elf/fw"
 )
@@ -23,6 +24,8 @@ func Start(
 	if err != nil {
 		panic(err)
 	}
+
+	db.AutoMigrate(&entity.Account{})
 
 	gRPCService, err := dep.InitGRpcService(
 		config.ServiceName,
