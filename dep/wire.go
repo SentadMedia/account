@@ -4,11 +4,16 @@ package dep
 
 import (
 	"github.com/google/wire"
+	"github.com/jinzhu/gorm"
+	"github.com/sentadmedia/account/app/adapter/db"
 	"github.com/sentadmedia/account/app/adapter/rpc"
 	"github.com/sentadmedia/account/app/adapter/rpc/proto"
 	"github.com/sentadmedia/account/app/usecase"
+	"github.com/sentadmedia/account/app/usecase/accounts"
+	"github.com/sentadmedia/account/app/usecase/repository"
 	"github.com/sentadmedia/elf/fw"
 	"github.com/sentadmedia/elf/modern/mdcli"
+	"github.com/sentadmedia/elf/modern/mddb"
 	"github.com/sentadmedia/elf/modern/mdenv"
 	"github.com/sentadmedia/elf/modern/mdgrpc"
 	"github.com/sentadmedia/elf/modern/mdio"
@@ -45,6 +50,7 @@ var observabilitySet = wire.NewSet(
 func InitGRpcService(
 	name string,
 	logLevel fw.LogLevel,
+	sqlDB *gorm.DB,
 	securityPolicy fw.SecurityPolicy,
 ) (mdservice.Service, error) {
 	wire.Build(
@@ -52,12 +58,10 @@ func InitGRpcService(
 		wire.Bind(new(fw.ProgramRuntime), new(mdruntime.BuildIn)),
 		wire.Bind(new(fw.Server), new(mdgrpc.GRpc)),
 		wire.Bind(new(fw.GRpcAPI), new(rpc.AccountAPI)),
-		wire.Bind(new(proto.AccountAPIServer), new(rpc.AccountAPIServer)),
-		// wire.Bind(new(keys.Producer), new(keys.ProducerPersist)),
-		// wire.Bind(new(keys.Consumer), new(keys.ConsumerCached)),
-		// wire.Bind(new(gen.Generator), new(gen.Alphabet)),
-		// wire.Bind(new(repo.AvailableKey), new(db.AvailableKeySQL)),
-		// wire.Bind(new(repo.AllocatedKey), new(db.AllocatedKeySQL)),
+		wire.Bind(new(proto.AccountServer), new(rpc.AccountServer)),
+		wire.Bind(new(accounts.Producer), new(accounts.ProducerPersist)),
+		wire.Bind(new(accounts.Consumer), new(accounts.ConsumerPersist)),
+		wire.Bind(new(repository.Account), new(db.AccountSQL)),
 
 		observabilitySet,
 
@@ -67,18 +71,21 @@ func InitGRpcService(
 		mdgrpc.NewGRpc,
 		mdservice.New,
 
-		rpc.NewAccountAPIServer,
+		rpc.NewAccountServer,
 		rpc.NewAccountAPI,
 		usecase.NewUseCase,
-		// provider.NewHTML,
-		// provider.NewEmailNotifier,
-		// keys.NewProducerPersist,
-		// provider.NewConsumer,
-		// keys.NewConsumerPersist,
-		// db.NewAvailableKeySQL,
-		// db.NewAllocatedKeySQL,
-		// gen.NewAlphabet,
-		// gen.NewBase62,
+		accounts.NewProducerPersist,
+		accounts.NewConsumerPersist,
+		db.NewAccountSQL,
 	)
 	return mdservice.Service{}, nil
+}
+
+// InitDBConnector creates DBConnector with configured dependencies.
+func InitDBConnector() fw.DBConnector {
+	wire.Build(
+		wire.Bind(new(fw.DBConnector), new(mddb.GormPstgresConnector)),
+		mddb.NewPostgresConnector,
+	)
+	return mddb.GormPstgresConnector{}
 }

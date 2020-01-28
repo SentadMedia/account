@@ -1,26 +1,30 @@
 package usecase
 
 import (
+	"github.com/sentadmedia/account/app/usecase/accounts"
 	"github.com/sentadmedia/elf/fw"
-	// "github.com/short-d/kgs/app/adapter/message"
-	// "github.com/short-d/kgs/app/entity"
-	// "github.com/short-d/kgs/app/usecase/keys"
-	// "github.com/short-d/kgs/app/usecase/notification"
 )
 
 type UseCase struct {
-	logger fw.Logger
+	logger   fw.Logger
+	producer accounts.Producer
+	consumer accounts.Consumer
 }
 
 func (u UseCase) GetAccount() string {
-	u.logger.Info("Getting Account")
+	r, _ := u.consumer.ConsumeInBatch()
+	u.logger.Info(r)
 	return "mgh.soufiane@gmail.com"
 }
 
 func NewUseCase(
 	logger fw.Logger,
+	producer accounts.Producer,
+	consumer accounts.Consumer,
 ) UseCase {
 	return UseCase{
-		logger: logger,
+		logger:   logger,
+		producer: producer,
+		consumer: consumer,
 	}
 }

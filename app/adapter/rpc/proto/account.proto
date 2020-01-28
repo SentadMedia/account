@@ -3,7 +3,7 @@ syntax = "proto3";
 package proto;
 
 
-service AccountAPI {
+service Account {
   rpc GetAccount (GetAccountRequest) returns (GetAccountResponse) {}
 }
 

@@ -14,12 +14,20 @@ type Config struct {
 
 // Start launches the GraphQL & HTTP APIs
 func Start(
+	dbConfig fw.DBConfig,
+	dbConnector fw.DBConnector,
 	config Config,
 	securityPolicy fw.SecurityPolicy,
 ) {
+	db, err := dbConnector.Connect(dbConfig)
+	if err != nil {
+		panic(err)
+	}
+
 	gRPCService, err := dep.InitGRpcService(
 		config.ServiceName,
 		config.LogLevel,
+		db,
 		securityPolicy,
 	)
 	if err != nil {

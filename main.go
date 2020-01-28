@@ -13,9 +13,19 @@ func main() {
 	env := dep.InjectEnvironment()
 	env.AutoLoadDotEnvFile()
 
-	serviceName := env.GetEnv("SERVICE_NAME", "Kgs")
+	dbConfig := fw.DBConfig{
+		Host:     env.GetEnv("DB_HOST", "localhost"),
+		Port:     mustInt(env.GetEnv("DB_PORT", "5432")),
+		User:     env.GetEnv("DB_USER", "postgres"),
+		Password: env.GetEnv("DB_PASSWORD", "password"),
+		DbName:   env.GetEnv("DB_NAME", "account"),
+	}
 
-	isEncryptionEnabled := mustBool(env.GetEnv("ENABLE_ENCRYPTION", ""))
+	dbConnector := dep.InitDBConnector()
+
+	serviceName := env.GetEnv("SERVICE_NAME", "AccountService")
+
+	isEncryptionEnabled := mustBool(env.GetEnv("ENABLE_ENCRYPTION", "false"))
 	certFilePath := env.GetEnv("CERT_FILE_PATH", "")
 	keyFilePath := env.GetEnv("KEY_FILE_PATH", "")
 
@@ -34,6 +44,8 @@ func main() {
 	}
 
 	rootCmd := cmd.NewRootCmd(
+		dbConfig,
+		dbConnector,
 		config,
 		securityPolicy,
 	)

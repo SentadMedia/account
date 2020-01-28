@@ -11,6 +11,8 @@ import (
 
 // NewRootCmd creates and initializes root command
 func NewRootCmd(
+	dbConfig fw.DBConfig,
+	dbConnector fw.DBConnector,
 	config app.Config,
 	securityPolicy fw.SecurityPolicy,
 ) fw.Command {
@@ -20,6 +22,8 @@ func NewRootCmd(
 			Usage: "start",
 			OnExecute: func(cmd *fw.Command, args []string) {
 				app.Start(
+					dbConfig,
+					dbConnector,
 					config,
 					securityPolicy,
 				)
