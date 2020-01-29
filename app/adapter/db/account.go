@@ -2,8 +2,6 @@ package db
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/sentadmedia/account/app/adapter/rpc/proto"
-
 	"github.com/sentadmedia/account/app/entity"
 	"github.com/sentadmedia/account/app/usecase/repository"
 )
@@ -15,21 +13,22 @@ type AccountSQL struct {
 	db *gorm.DB
 }
 
-func (a AccountSQL) GetAcccount() string {
-	return "kawtar.elouaraini@gmail.com"
-}
-
-func (p AccountSQL) CreateAccount(req *proto.PostAccountRequest) (entity.Account, error) {
-	account := entity.Account{
-		Username: req.Username,
-		Email:    req.Email,
-		Password: req.Password,
-	}
-	p.db.Create(&account)
-	return account, nil
-}
-
-// NewUserSQL creates UserSQL
+// NewAccountSQL creates UserSQL
 func NewAccountSQL(db *gorm.DB) AccountSQL {
 	return AccountSQL{db: db}
+}
+
+// RegisterAccount Actually writes a user into DB
+func (p AccountSQL) RegisterAccount(username, email, password string) (entity.Account, error) {
+	account := entity.Account{
+		Username: username,
+		Email:    email,
+		Password: password,
+	}
+
+	if dbc := p.db.Create(&account); dbc.Error != nil {
+		return entity.Account{}, dbc.Error
+	}
+
+	return account, nil
 }

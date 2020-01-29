@@ -1,27 +1,27 @@
 package accounts
 
 import (
-	"github.com/sentadmedia/account/app/adapter/rpc/proto"
 	"github.com/sentadmedia/account/app/entity"
 	"github.com/sentadmedia/account/app/usecase/repository"
 	"github.com/sentadmedia/elf/fw"
 )
 
+// Producer interface
 type Producer interface {
-	CreateAccount(req *proto.PostAccountRequest) (entity.Account, error)
+	RegisterAccount(username, email, password string) (entity.Account, error)
 }
 
 var _ Producer = (*ProducerPersist)(nil)
 
-// ProducerPersist represents persistent key producer
+// ProducerPersist interface
 type ProducerPersist struct {
 	logger fw.Logger
 	repo   repository.Account
 }
 
-// Produce generates unique keys and store them in the repository
-func (p ProducerPersist) CreateAccount(req *proto.PostAccountRequest) (entity.Account, error) {
-	return p.repo.CreateAccount(req)
+// RegisterAccount write account into DB
+func (p ProducerPersist) RegisterAccount(username, email, password string) (entity.Account, error) {
+	return p.repo.RegisterAccount(username, email, password)
 }
 
 // NewProducerPersist creates and initializes Producer

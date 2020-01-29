@@ -46,7 +46,7 @@ func InitGRpcService(name string, logLevel fw.LogLevel, sqlDB *gorm.DB, security
 	producerPersist := accounts.NewProducerPersist(accountSQL, local)
 	consumerPersist := accounts.NewConsumerPersist(accountSQL)
 	useCase := usecase.NewUseCase(local, producerPersist, consumerPersist)
-	accountServer := rpc.NewAccountServer(useCase)
+	accountServer := rpc.NewAccountServer(useCase, local)
 	accountAPI := rpc.NewAccountAPI(accountServer)
 	gRpc, err := mdgrpc.NewGRpc(accountAPI, securityPolicy)
 	if err != nil {

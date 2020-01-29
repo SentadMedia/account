@@ -4,8 +4,7 @@ package proto;
 
 
 service Account{
-  rpc GetAccount (GetAccountRequest) returns (GetAccountResponse) {}
-  rpc PostAccount (PostAccountRequest) returns (PostAccountResponse) {}
+  rpc RegisterAccount (RegisterAccountRequest) returns (RegisterAccountResponse) {}
 }
 
 message User {
@@ -15,20 +14,12 @@ message User {
   string password = 4;
 }
 
-message PostAccountRequest {
+message RegisterAccountRequest {
   string username = 1;
   string email = 2;
   string password = 3;
 }
 
-message PostAccountResponse {
+message RegisterAccountResponse {
   User account = 1;
-}
-
-
-message GetAccountRequest {
-}
-
-message GetAccountResponse {
-  string account = 1;
 }
