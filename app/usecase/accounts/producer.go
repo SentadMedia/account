@@ -8,7 +8,7 @@ import (
 
 // Producer interface
 type Producer interface {
-	RegisterAccount(username, email, password string) (entity.Account, error)
+	RegisterAccount(account *entity.Account, roleID int32) error
 }
 
 var _ Producer = (*ProducerPersist)(nil)
@@ -20,8 +20,8 @@ type ProducerPersist struct {
 }
 
 // RegisterAccount write account into DB
-func (p ProducerPersist) RegisterAccount(username, email, password string) (entity.Account, error) {
-	return p.repo.RegisterAccount(username, email, password)
+func (p ProducerPersist) RegisterAccount(account *entity.Account, roleID int32) error {
+	return p.repo.RegisterAccount(account, roleID)
 }
 
 // NewProducerPersist creates and initializes Producer

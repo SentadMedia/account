@@ -25,7 +25,7 @@ func Start(
 		panic(err)
 	}
 
-	db.AutoMigrate(&entity.Account{})
+	db = db.AutoMigrate(&entity.Account{}, &entity.Role{}, &entity.Permission{})
 
 	gRPCService, err := dep.InitGRpcService(
 		config.ServiceName,

@@ -42,7 +42,7 @@ func InitGRpcService(name string, logLevel fw.LogLevel, sqlDB *gorm.DB, security
 	timer := mdtimer.NewTimer()
 	buildIn := mdruntime.NewBuildIn()
 	local := mdlogger.NewLocal(name, logLevel, stdOut, timer, buildIn)
-	accountSQL := db.NewAccountSQL(sqlDB)
+	accountSQL := db.NewAccountSQL(sqlDB, local)
 	producerPersist := accounts.NewProducerPersist(accountSQL, local)
 	consumerPersist := accounts.NewConsumerPersist(accountSQL)
 	useCase := usecase.NewUseCase(local, producerPersist, consumerPersist)

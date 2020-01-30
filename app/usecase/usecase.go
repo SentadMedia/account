@@ -27,6 +27,6 @@ func NewUseCase(
 }
 
 // RegisterAccount create a new account using producer
-func (u UseCase) RegisterAccount(username, email, password string) (entity.Account, error) {
-	return u.producer.RegisterAccount(username, email, password)
+func (u UseCase) RegisterAccount(account *entity.Account, roleID int32) error {
+	return u.producer.RegisterAccount(account, roleID)
 }

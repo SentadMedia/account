@@ -7,19 +7,16 @@ service Account{
   rpc RegisterAccount (RegisterAccountRequest) returns (RegisterAccountResponse) {}
 }
 
-message User {
-  int64 id = 1;
-  string username = 2;
-  string email = 3;
-  string password = 4;
-}
-
 message RegisterAccountRequest {
-  string username = 1;
-  string email = 2;
-  string password = 3;
+  int32 id = 1;
+  string userName = 2;
+  string firstName = 3;
+  string lastName = 4;
+  string email = 5;
+  string password = 6;
+  bool isSuperUser = 7;
+  int32 roleId = 8;
 }
 
 message RegisterAccountResponse {
-  User account = 1;
 }

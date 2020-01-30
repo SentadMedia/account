@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/sentadmedia/account/app/adapter/rpc/proto"
+	"github.com/sentadmedia/account/app/entity"
 	"github.com/sentadmedia/account/app/usecase"
 	"github.com/sentadmedia/elf/fw"
 )
@@ -30,18 +31,24 @@ func NewAccountServer(
 
 // RegisterAccount Create a new account
 func (a AccountServer) RegisterAccount(ctx context.Context, req *proto.RegisterAccountRequest) (*proto.RegisterAccountResponse, error) {
-	account, err := a.useCase.RegisterAccount(req.Username, req.Password, req.Email)
+	account := entity.Account{
+		Username:    req.UserName,
+		FirstName:   req.FirstName,
+		LastName:    req.LastName,
+		Email:       req.Email,
+		Password:    req.Password,
+		IsSuperuser: req.IsSuperUser,
+	}
+
+	a.logger.Debug(fmt.Sprintf("Account before insert=%+v", account))
+
+	err := a.useCase.RegisterAccount(&account, req.RoleId)
 	if err != nil {
-		a.logger.Error(fmt.Errorf("Error whire creating an account err=%s", err.Error()))
+		a.logger.Error(err)
 		return &proto.RegisterAccountResponse{}, err
 	}
 
-	return &proto.RegisterAccountResponse{
-		Account: &proto.User{
-			Id:       account.ID,
-			Username: account.Username,
-			Email:    account.Email,
-			Password: account.Password,
-		},
-	}, nil
+	a.logger.Debug(fmt.Sprintf("Account before insert=%+v", account))
+
+	return &proto.RegisterAccountResponse{}, nil
 }
