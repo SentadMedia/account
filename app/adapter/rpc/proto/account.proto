@@ -4,19 +4,27 @@ package proto;
 
 
 service Account{
-  rpc RegisterAccount (RegisterAccountRequest) returns (RegisterAccountResponse) {}
+  rpc RegisterAccount (RegisterAccountRequest) returns (Void) {}
+  rpc SignIn (SignInRequest) returns (SignInResponse) {}
 }
+
+message Void {}
 
 message RegisterAccountRequest {
-  int32 id = 1;
-  string userName = 2;
-  string firstName = 3;
-  string lastName = 4;
-  string email = 5;
-  string password = 6;
-  bool isSuperUser = 7;
-  int32 roleId = 8;
+  string userName = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string email = 4;
+  string password = 5;
+  bool isSuperUser = 6;
+  int32 roleId = 7;
 }
 
-message RegisterAccountResponse {
+message SignInRequest {
+  string userName = 1;
+  string Password = 2;
+}
+
+message SignInResponse {
+  string sessionToken = 1;
 }

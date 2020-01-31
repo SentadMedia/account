@@ -2,7 +2,6 @@ package rpc
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/sentadmedia/account/app/adapter/rpc/proto"
 	"github.com/sentadmedia/account/app/entity"
@@ -29,8 +28,14 @@ func NewAccountServer(
 	}
 }
 
+// SignIn Log in a user
+func (a AccountServer) SignIn(ctx context.Context, req *proto.SignInRequest) (response *proto.SignInResponse, err error) {
+	response.SessionToken, err = a.useCase.SignIn(req.UserName, req.Password)
+	return
+}
+
 // RegisterAccount Create a new account
-func (a AccountServer) RegisterAccount(ctx context.Context, req *proto.RegisterAccountRequest) (*proto.RegisterAccountResponse, error) {
+func (a AccountServer) RegisterAccount(ctx context.Context, req *proto.RegisterAccountRequest) (response *proto.Void, err error) {
 	account := entity.Account{
 		Username:    req.UserName,
 		FirstName:   req.FirstName,
@@ -40,15 +45,10 @@ func (a AccountServer) RegisterAccount(ctx context.Context, req *proto.RegisterA
 		IsSuperuser: req.IsSuperUser,
 	}
 
-	a.logger.Debug(fmt.Sprintf("Account before insert=%+v", account))
-
-	err := a.useCase.RegisterAccount(&account, req.RoleId)
+	err = a.useCase.RegisterAccount(&account, req.RoleId)
 	if err != nil {
 		a.logger.Error(err)
-		return &proto.RegisterAccountResponse{}, err
 	}
 
-	a.logger.Debug(fmt.Sprintf("Account before insert=%+v", account))
-
-	return &proto.RegisterAccountResponse{}, nil
+	return
 }

@@ -30,3 +30,8 @@ func NewUseCase(
 func (u UseCase) RegisterAccount(account *entity.Account, roleID int32) error {
 	return u.producer.RegisterAccount(account, roleID)
 }
+
+// SignIn Log In a user
+func (u UseCase) SignIn(username, password string) (string, error) {
+	return u.producer.SignIn(username, password)
+}

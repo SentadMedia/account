@@ -7,7 +7,7 @@ import (
 // Account Data type
 type Account struct {
 	gorm.Model
-	Username    string       `gorm:"unique;"`
+	Username    string       `gorm:"UNIQUE_INDEX;"`
 	FirstName   string       `gorm:"type:varchar(255);default:'firstName'"`
 	LastName    string       `gorm:"type:varchar(255);default:'lastName'"`
 	Email       string       `gorm:"type:varchar(255);not null;unique;"`
