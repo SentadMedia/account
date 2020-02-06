@@ -26,24 +26,24 @@ func NewAccountSQL(db *gorm.DB, logger fw.Logger) AccountSQL {
 }
 
 // SignIn Check if the user exists and if it have the correct password, then creates a sessionToken
-func (p AccountSQL) SignIn(username, password string) error {
+func (p AccountSQL) SignIn(username, password string) (uint64, error) {
 	// Check if the user exists
 	var user entity.Account
 	if err := p.db.First(&user, "username = ?", username).Error; gorm.IsRecordNotFoundError(err) {
 		p.logger.Errorf("Cannot find a user with the provided username (%s)", username)
-		return status.Error(codes.InvalidArgument, "username and/or password does not match")
+		return 0, status.Error(codes.InvalidArgument, "username and/or password does not match")
 	} else if err != nil {
 		p.logger.Errorf("Unexpected error while querying for a username with value (%s) err=%v", username, err)
-		return status.Error(codes.Internal, "Internal server error")
+		return 0, status.Error(codes.Internal, "Internal server error")
 	}
 
 	// Verify it have the correct password
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 		p.logger.Warnf("Wrong password provided for user (%s)", username)
-		return status.Error(codes.InvalidArgument, "username and/or password does not match")
+		return 0, status.Error(codes.InvalidArgument, "username and/or password does not match")
 	}
 
-	return nil
+	return uint64(user.ID), nil
 }
 
 // RegisterAccount Actually writes a user into DB

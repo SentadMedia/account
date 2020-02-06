@@ -29,9 +29,9 @@ func NewAccountServer(
 }
 
 // SignIn Log in a user
-func (a AccountServer) SignIn(ctx context.Context, req *proto.SignInRequest) (res *proto.Void, err error) {
+func (a AccountServer) SignIn(ctx context.Context, req *proto.SignInRequest) (res *proto.SignInResponse, err error) {
 	a.logger.Debugf("SignIn gRPC request req=%v", req)
-	err = a.useCase.SignIn(req.UserName, req.Password)
+	res.UserId, err = a.useCase.SignIn(req.UserName, req.Password)
 	if err != nil {
 		a.logger.Error(err)
 	}
