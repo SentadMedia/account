@@ -27,7 +27,7 @@ func NewAccountSQL(db *gorm.DB, logger fw.Logger) AccountSQL {
 func (p AccountSQL) SignIn(username, password string) (string, error) {
 	// Check if the user exists
 	var user entity.Account
-	if err := p.db.First(&user, "username = ?", username).Debug().Error; gorm.IsRecordNotFoundError(err) {
+	if err := p.db.First(&user, "username = ?", username).Error; gorm.IsRecordNotFoundError(err) {
 		return "", fmt.Errorf("User Nor Found")
 	} else if err != nil {
 		return "", err
@@ -40,7 +40,7 @@ func (p AccountSQL) SignIn(username, password string) (string, error) {
 
 	// Create a Token
 
-	return "SESSION_TOKEN", fmt.Errorf("Method not implemented")
+	return "SESSION_TOKEN", nil
 }
 
 // RegisterAccount Actually writes a user into DB

@@ -29,9 +29,15 @@ func NewAccountServer(
 }
 
 // SignIn Log in a user
-func (a AccountServer) SignIn(ctx context.Context, req *proto.SignInRequest) (response *proto.SignInResponse, err error) {
-	response.SessionToken, err = a.useCase.SignIn(req.UserName, req.Password)
-	return
+func (a AccountServer) SignIn(ctx context.Context, req *proto.SignInRequest) (*proto.SignInResponse, error) {
+	a.logger.Debugf()
+	response := proto.SignInResponse{}
+	token, err := a.useCase.SignIn(req.UserName, req.Password)
+	if err != nil {
+		return &response, err
+	}
+	response.SessionToken = token
+	return &response, nil
 }
 
 // RegisterAccount Create a new account
