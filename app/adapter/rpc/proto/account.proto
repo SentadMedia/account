@@ -5,7 +5,7 @@ package proto;
 
 service Account{
   rpc RegisterAccount (RegisterAccountRequest) returns (Void) {}
-  rpc SignIn (SignInRequest) returns (SignInResponse) {}
+  rpc SignIn (SignInRequest) returns (Void) {}
 }
 
 message Void {}
@@ -25,6 +25,3 @@ message SignInRequest {
   string Password = 2;
 }
 
-message SignInResponse {
-  string sessionToken = 1;
-}

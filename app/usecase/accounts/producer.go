@@ -9,7 +9,7 @@ import (
 // Producer interface
 type Producer interface {
 	RegisterAccount(account *entity.Account, roleID int32) error
-	SignIn(username, password string) (string, error)
+	SignIn(username, password string) error
 }
 
 var _ Producer = (*ProducerPersist)(nil)
@@ -26,7 +26,7 @@ func (p ProducerPersist) RegisterAccount(account *entity.Account, roleID int32) 
 }
 
 // SignIn Log In a user
-func (p ProducerPersist) SignIn(username, password string) (string, error) {
+func (p ProducerPersist) SignIn(username, password string) error {
 	return p.repo.SignIn(username, password)
 }
 

@@ -32,6 +32,6 @@ func (u UseCase) RegisterAccount(account *entity.Account, roleID int32) error {
 }
 
 // SignIn Log In a user
-func (u UseCase) SignIn(username, password string) (string, error) {
+func (u UseCase) SignIn(username, password string) error {
 	return u.producer.SignIn(username, password)
 }

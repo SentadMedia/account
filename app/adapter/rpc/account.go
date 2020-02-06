@@ -29,15 +29,13 @@ func NewAccountServer(
 }
 
 // SignIn Log in a user
-func (a AccountServer) SignIn(ctx context.Context, req *proto.SignInRequest) (*proto.SignInResponse, error) {
-	a.logger.Debugf()
-	response := proto.SignInResponse{}
-	token, err := a.useCase.SignIn(req.UserName, req.Password)
+func (a AccountServer) SignIn(ctx context.Context, req *proto.SignInRequest) (res *proto.Void, err error) {
+	a.logger.Debugf("SignIn gRPC request req=%v", req)
+	err = a.useCase.SignIn(req.UserName, req.Password)
 	if err != nil {
-		return &response, err
+		a.logger.Error(err)
 	}
-	response.SessionToken = token
-	return &response, nil
+	return
 }
 
 // RegisterAccount Create a new account

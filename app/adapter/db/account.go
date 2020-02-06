@@ -8,6 +8,8 @@ import (
 	"github.com/sentadmedia/account/app/usecase/repository"
 	"github.com/sentadmedia/elf/fw"
 	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var _ repository.Account = (*AccountSQL)(nil)
@@ -24,23 +26,24 @@ func NewAccountSQL(db *gorm.DB, logger fw.Logger) AccountSQL {
 }
 
 // SignIn Check if the user exists and if it have the correct password, then creates a sessionToken
-func (p AccountSQL) SignIn(username, password string) (string, error) {
+func (p AccountSQL) SignIn(username, password string) error {
 	// Check if the user exists
 	var user entity.Account
 	if err := p.db.First(&user, "username = ?", username).Error; gorm.IsRecordNotFoundError(err) {
-		return "", fmt.Errorf("User Nor Found")
+		p.logger.Errorf("Cannot find a user with the provided username (%s)", username)
+		return status.Error(codes.InvalidArgument, "username and/or password does not match")
 	} else if err != nil {
-		return "", err
+		p.logger.Errorf("Unexpected error while querying for a username with value (%s) err=%v", username, err)
+		return status.Error(codes.Internal, "Internal server error")
 	}
 
 	// Verify it have the correct password
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		return "", fmt.Errorf("Wrong Password")
+		p.logger.Warnf("Wrong password provided for user (%s)", username)
+		return status.Error(codes.InvalidArgument, "username and/or password does not match")
 	}
 
-	// Create a Token
-
-	return "SESSION_TOKEN", nil
+	return nil
 }
 
 // RegisterAccount Actually writes a user into DB
